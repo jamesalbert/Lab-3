@@ -4,10 +4,10 @@
 
 struct BlockList {
   int size;
-  bool allocated;
+  char allocated;
   void* start;
   void* end;
-}
+};
 
 int main () {
 
@@ -25,8 +25,8 @@ void free () {
   return;
 }
 
-BlockList blockList () {
-  BlockList toReturn;
+struct BlockList blockList () {
+  struct BlockList toReturn;
 
 
   return toReturn;
