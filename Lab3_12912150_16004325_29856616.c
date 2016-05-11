@@ -19,8 +19,8 @@ int parsecommand(char*, char* opts[MAXARGS]);
 int Allocate(void*, int);
 void Free(void* heap, int);
 void blockList(void*);
-void writeHeap(int, char, int);
-char* printHeap(int, int);
+void writeHeap(void*, int, char, int);
+char* printHeap(void*, int, int);
 void quit();
 
 // Mike's (Remove name before submission)
@@ -45,16 +45,16 @@ int main () {
       printf("%i\n", Allocate(heap, atoi(argv[1])));
     }
     else if(strcmp(argv[0], "free") == 0) {
-
+      Free(heap, atoi(argv[1]));
     }
     else if(strcmp(argv[0], "blocklist") == 0) {
-      blocklist();
+      blockList(heap);
     }
     else if(strcmp(argv[0], "writeheap") == 0) {
-
+      writeHeap(heap, atoi(argv[1]), argv[2], atoi(argv[3]));
     }
     else if(strcmp(argv[0], "printheap") == 0) {
-
+      printHeap(heap, atoi(argv[1]), atoi(argv[2]));
     }
     else if(strcmp(argv[0], "quit") == 0) {
       break;
@@ -101,7 +101,10 @@ int Allocate (void* heap, int bytes) {
       Then the actual data, followed by a buffer of 3 to make it 12.
   */
   void* end = heap + 400;
-  static int bID = 1;                       // block ID for new blocks
+
+  printf("Heap: 0x%p\n", heap);
+  printf("End : 0x%p\n", end);
+  static int bID = 0;                       // block ID for new blocks
 
   // find free block
   while( (heap < end)                       // within heap
@@ -147,12 +150,12 @@ void blockList (void* heap) {
 }
 
 // Johns (Remove name before submission)
-void writeHeap (int blockId, char content, int bytes) {
+void writeHeap (void* heap, int blockId, char content, int bytes) {
 
 }
 
 // Johns (Remove name before submission)
-char* printHeap (int blockId, int bytes) {
+char* printHeap (void* heap, int blockId, int bytes) {
   char* lololol = "skadoosh";
   return lololol;
 }
