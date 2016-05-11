@@ -36,21 +36,37 @@ int main () {
   // variable declaration
   char command[MAXCMD];
   void* heap = malloc(HEAPSIZE);
+  char* argv[MAXARGS];
+  int argc;
 
   // memory management
-  *((int*)heap) = HEAPSIZE;
+  *(int*)heap = HEAPSIZE;
 
   // Loop - fetch command, call functions
   while(1) {
     printf("> ");
     gets(command);
 
-    if(strcmp(command, "quit") == 0) {
+    argc = parsecommand(command, argv);
+
+    if(strcmp(argv[0], "allocate") == 0) {
+      printf("%i\n", Allocate(heap, atoi(argv[1])));
+    }
+    else if(strcmp(argv[0], "free") == 0) {
+
+    }
+    else if(strcmp(argv[0], "blocklist") == 0) {
+
+    }
+    else if(strcmp(argv[0], "writeheap") == 0) {
+
+    }
+    else if(strcmp(argv[0], "printheap") == 0) {
+
+    }
+    else if(strcmp(argv[0], "quit") == 0) {
       break;
     }
-
-    // Call functions
-
   }
   return 0;
 }
@@ -80,12 +96,12 @@ int Allocate (void* heap, int bytes) {
       implicit list - header will contain size of block and allocation status
       first fit - search until first block that will fit
 
-      The heap will be word aligned (4 bytes for 32 bit system), the first byte
+      The heap will be DWORD aligned (4 bytes for 32 bit system), the first byte
       of the header will be the size of the allocation and the status.
       The 2nd byte will be the ID of the block. The 3rd byte will be the size
       of the payload to prevent writeHeap() from exceeding the size of the
       payload. Then the payload and finally the buffer(unused) to align to
-      word increments.
+      DWORD increments.
 
       Example: Allocate 5  [12|1][0][6][payload][buffer 3]
       First byte tells us it is size 12 chunk and 1 is allocated. Second byte
@@ -93,12 +109,28 @@ int Allocate (void* heap, int bytes) {
       Then the actual data, followed by a buffer of 3 to make it 12.
   */
   void* end = heap + 400;
+  static int bID = 1;                       // block ID for new blocks
 
   // find free block
+  while( (heap < end)                       // within heap
+         && ((*(int*)heap & 1)              // block is allocated
+         || (*((int*)heap + 2) < bytes)))   // payload too small
+    heap = heap + (*(int*)heap & -2);       // increment pointer to next block
+
+  // no room in heap
+  if(heap == end)
+    return -1;
 
   // allocate
+  int newsize = (((bytes + 3) >> 2) << 2) + 4;    // round up increment 4
+  int oldsize = *(int*)heap & -2;
+  *(int*)heap = newsize | 1;                      // set size & allocation
+  *((int*)heap + 1) = ++bID;                      // set blockId
+  *((int*)heap + 2) = bytes;                      // set payload
+  if(newsize < oldsize)
+    *((int*)heap + newsize) = oldsize - newsize;  // set next block
 
-  return 0;
+  return bID;
 }
 
 // Mike's (Remove name before submission)
