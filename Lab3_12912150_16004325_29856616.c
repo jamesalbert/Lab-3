@@ -18,18 +18,10 @@
 int parsecommand(char*, char* opts[MAXARGS]);
 int Allocate(void*, int);
 void Free(void* heap, int);
-struct Block* blockList();
+void blockList(void*);
 void writeHeap(int, char, int);
 char* printHeap(int, int);
 void quit();
-
-// Data Type Definitions
-struct Block {
-  int size;
-  char allocated;
-  void* start;
-  void* end;
-};
 
 // Mike's (Remove name before submission)
 int main () {
@@ -56,7 +48,7 @@ int main () {
 
     }
     else if(strcmp(argv[0], "blocklist") == 0) {
-
+      blocklist();
     }
     else if(strcmp(argv[0], "writeheap") == 0) {
 
@@ -142,9 +134,16 @@ void Free (void* heap, int blockId) {
   return;
 }
 
-struct Block* blockList () {
-  static struct Block blocks[MAXBLOCKS];
-  return blocks;
+void blockList (void* heap) {
+  /*
+    reviewed the write up, we dont need a structure for this. blocklist will
+    be called in main with the heap pointer. blockList will then parse the
+    heap printing the information.
+
+    see allocate comments for design of the heap
+  */
+
+  return;
 }
 
 // Johns (Remove name before submission)
