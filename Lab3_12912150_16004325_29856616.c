@@ -47,7 +47,6 @@ int parsecommand(char* command, char* opts[MAXARGS]) {
   strcpy(opts[argc], tok); // append command to binary name
   for (tok = strtok(NULL, delim); tok != NULL; tok = strtok(NULL, delim))
     opts[++argc] = tok;
-  opts[argc+1] = NULL; // last element must be null for execve
   return argc;
 }
 
