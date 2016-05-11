@@ -9,14 +9,15 @@
 #include <unistd.h>
 
 // Definitions
-#define MAXBLOCKS 128 // maximum amount of blocks
-#define MAXARGS 128   // maximum amount of arguments
-#define MAXCMD 255    // maximum length of command
+#define MAXBLOCKS   128   // maximum amount of blocks
+#define MAXARGS     128   // maximum amount of arguments
+#define MAXCMD      255   // maximum length of command
+#define HEAPSIZE    400   // size of heap
 
 // Prototypes
 int parsecommand(char*, char* opts[MAXARGS]);
-int Allocate(int);
-void Free(int);
+int Allocate(void*, int);
+void Free(void* heap, int);
 struct Block* blockList();
 void writeHeap(int, char, int);
 char* printHeap(int, int);
@@ -30,9 +31,27 @@ struct Block {
   void* end;
 };
 
-// Mike's
+// Mike's (Remove name before submission)
 int main () {
+  // variable declaration
+  char command[MAXCMD];
+  void* heap = malloc(HEAPSIZE);
 
+  // memory management
+  *((int*)heap) = HEAPSIZE;
+
+  // Loop - fetch command, call functions
+  while(1) {
+    printf("> ");
+    gets(command);
+
+    if(strcmp(command, "quit") == 0) {
+      break;
+    }
+
+    // Call functions
+
+  }
   return 0;
 }
 
@@ -55,14 +74,38 @@ int parsecommand(char* command, char* opts[MAXARGS]) {
   return argc;
 }
 
-// Mikes
-int Allocate (int bytes) {
+// Mike's (Remove name before submission)
+int Allocate (void* heap, int bytes) {
+  /* Allocate
+      implicit list - header will contain size of block and allocation status
+      first fit - search until first block that will fit
+
+      The heap will be word aligned (4 bytes for 32 bit system), the first byte
+      of the header will be the size of the allocation and the status.
+      The 2nd byte will be the ID of the block. The 3rd byte will be the size
+      of the payload to prevent writeHeap() from exceeding the size of the
+      payload. Then the payload and finally the buffer(unused) to align to
+      word increments.
+
+      Example: Allocate 5  [12|1][0][6][payload][buffer 3]
+      First byte tells us it is size 12 chunk and 1 is allocated. Second byte
+      tells us it is block 0. Next byte tells us the payload is 6 bytes.
+      Then the actual data, followed by a buffer of 3 to make it 12.
+  */
+  void* end = heap + 400;
+
+  // find free block
+
+  // allocate
 
   return 0;
 }
 
-// Mikes
-void Free (int blockId) {
+// Mike's (Remove name before submission)
+void Free (void* heap, int blockId) {
+  // find block
+
+  // free block
 
   return;
 }
@@ -72,12 +115,12 @@ struct Block* blockList () {
   return blocks;
 }
 
-// Johns
+// Johns (Remove name before submission)
 void writeHeap (int blockId, char content, int bytes) {
 
 }
 
-// Johns
+// Johns (Remove name before submission)
 char* printHeap (int blockId, int bytes) {
   char* lololol = "skadoosh";
   return lololol;
