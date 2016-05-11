@@ -51,23 +51,30 @@ int parsecommand(char* command, char* opts[MAXARGS]) {
   return argc;
 }
 
-int allocate () {
+int Allocate (int bytes) {
 
   return 0;
 }
 
-void free () {
+void Free (int blockId) {
 
   return;
 }
 
-struct BlockList blockList () {
-  struct BlockList toReturn;
-
-
-  return toReturn;
+struct BlockList* blockList () {
+  static struct BlockList blocks[MAXBLOCKS];
+  return blocks;
 }
 
-void writeHeap () {
+void writeHeap (int blockId, char content, int bytes) {
+
+}
+
+char* printHeap (int blockId, int bytes) {
+  char* lololol;
+  return lololol;
+}
+
+void quit() {
 
 }
