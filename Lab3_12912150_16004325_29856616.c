@@ -2,30 +2,35 @@
 // James Albert III 16004325
 // John Reissmueller 29856616
 
+// Includes
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
+// Definitions
 #define MAXBLOCKS 128 // maximum amount of blocks
 #define MAXARGS 128   // maximum amount of arguments
 #define MAXCMD 255    // maximum length of command
 
+// Prototypes
 int parsecommand(char*, char* opts[MAXARGS]);
 int Allocate(int);
 void Free(int);
-struct BlockList* blockList();
+struct Block* blockList();
 void writeHeap(int, char, int);
 char* printHeap(int, int);
 void quit();
 
-struct BlockList {
+// Data Type Definitions
+struct Block {
   int size;
   char allocated;
   void* start;
   void* end;
 };
 
+// Mike's
 int main () {
 
   return 0;
@@ -50,27 +55,31 @@ int parsecommand(char* command, char* opts[MAXARGS]) {
   return argc;
 }
 
+// Mikes
 int Allocate (int bytes) {
 
   return 0;
 }
 
+// Mikes
 void Free (int blockId) {
 
   return;
 }
 
-struct BlockList* blockList () {
-  static struct BlockList blocks[MAXBLOCKS];
+struct Block* blockList () {
+  static struct Block blocks[MAXBLOCKS];
   return blocks;
 }
 
+// Johns
 void writeHeap (int blockId, char content, int bytes) {
 
 }
 
+// Johns
 char* printHeap (int blockId, int bytes) {
-  char* lololol;
+  char* lololol = "skadoosh";
   return lololol;
 }
 
