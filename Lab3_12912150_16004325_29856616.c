@@ -22,10 +22,10 @@ static int bID;
 // Prototypes
 int parsecommand(char*, char* opts[MAXARGS]);
 int Allocate(int*, int);
-void Free(int* heap, int);
+int Free(int* heap, int);
 int blockList(int*);
-void writeHeap(int*, int, char, int);
-char* printHeap(int*, int, int);
+int writeHeap(int*, int, char, int);
+int printHeap(int*, int, int);
 int* findBlockId(int*, int);
 
 // Mike's (Remove name before submission)
@@ -68,6 +68,10 @@ int main () {
 }
 #endif
 
+bool isZero(int param) {
+  return param == 0;
+}
+
 int parsecommand(char* command, char* opts[MAXARGS]) {
   /* parsecommand
       @command: full command from prompt
@@ -105,7 +109,7 @@ int Allocate (int* p, int bytes) {
       tells us it is block 0. Next WORD tells us the payload is 6 bytes.
       Then the actual data, followed by a buffer of 2 bytes to make it 12.
   */
-  static int bID = 0;                     // block ID for new blocks
+  if (isZero(bytes)) return -1;
   int* end = p + (HEAPSIZE/4);            // pointer to end of heap
 
   // find free block
@@ -142,11 +146,12 @@ int Allocate (int* p, int bytes) {
 }
 
 // Mike's (Remove name before submission)
-void Free (int* p, int blockId) {
+int Free (int* p, int blockId) {
+  if (isZero(blockId)) return -1;
   p = findBlockId(p, blockId);
-  if(!p) return;
+  if(!p) return -1;
   *p = *p & -2;
-  return;
+  return 0;
 }
 
 int* findBlockId(int* p, int blockId) {
@@ -155,6 +160,7 @@ int* findBlockId(int* p, int blockId) {
     will return pointer to block that contains the blockId or return 0
     if no block was found with that blockId
   */
+  if (isZero(blockId)) return NULL;
   int* end = p + (HEAPSIZE/4);
   while((p < end) && *(p + 1) != blockId)
     p = p + (*p & -2)/4;
