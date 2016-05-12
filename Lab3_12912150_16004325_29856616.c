@@ -16,18 +16,17 @@
 
 // Prototypes
 int parsecommand(char*, char* opts[MAXARGS]);
-void Allocate(void*, int);
-void Free(void* heap, int);
-void blockList(void*);
-void writeHeap(void*, int, char, int);
-char* printHeap(void*, int, int);
-void quit();
+void Allocate(char*, int);
+void Free(char* heap, int);
+void blockList(char*);
+void writeHeap(char*, int, char, int);
+char* printHeap(char*, int, int);
 
 // Mike's (Remove name before submission)
 int main () {
   // variable declaration
   char command[MAXCMD];
-  void* heap = malloc(HEAPSIZE);
+  char* heap = malloc(HEAPSIZE);
   char* argv[MAXARGS];
   int argc;
 
@@ -60,6 +59,7 @@ int main () {
       break;
     }
   }
+  free(heap);
   return 0;
 }
 
@@ -83,47 +83,43 @@ int parsecommand(char* command, char* opts[MAXARGS]) {
 }
 
 // Mike's (Remove name before submission)
-void Allocate (void* heap, int bytes) {
+void Allocate (char* heap, int bytes) {
   /* Allocate
       implicit list - header will contain size of block and allocation status
       first fit - search until first block that will fit
 
-      The heap will be DWORD aligned (4 bytes for 32 bit system), the first byte
+      The heap will be WORD aligned (4 bytes for 32 bit system), the first byte
       of the header will be the size of the allocation and the status.
       The 2nd byte will be the ID of the block. The 3rd byte will be the size
       of the payload to prevent writeHeap() from exceeding the size of the
       payload. Then the payload and finally the buffer(unused) to align to
-      DWORD increments.
+      WORD increments.
 
-      Example: Allocate 5  [12|1][0][6][payload][buffer 3]
-      First byte tells us it is size 12 chunk and 1 is allocated. Second byte
-      tells us it is block 0. Next byte tells us the payload is 6 bytes.
-      Then the actual data, followed by a buffer of 3 to make it 12.
+      Example: Allocate 6  [12|1][0][6][payload][buffer 3]
+      First WORD tells us it is size 12 chunk and 1 is allocated. Second WORD
+      tells us it is block 0. Next WORD tells us the payload is 6 bytes.
+      Then the actual data, followed by a buffer of 3 bytes to make it 12.
   */
-  int* p = (int*)heap;
-  int* end = p + 400;
-
-  static int bID = 0;                       // block ID for new blocks
-
-  printf("p = %p\n", p);
+  static int bID = 0;                     // block ID for new blocks
+  int* p = (int*)heap;                    // typecast to integer for management
+  int* end = p + (HEAPSIZE/4);            // pointer to end of heap
 
   // find free block
-  while ((p < end) && ((*p & 1) || (*p <= (bytes + 3)))) {
-    printf("Header: Address[0x%p] ", p);
-    printf("Size[%i] Allocated[%i] blockId[%i] payload[%i]\n",
-      *p & -2, *p & 1, *(p+1), *(p+2));
-    printf("p = %p\n", p);
-    p = p + (*p & -2);
-    printf("p = %p\n", p);
+  int len = ((bytes + 12)%4 == 0) ? (bytes + 12)/4 : ((((bytes + 12) >> 2) << 2) + 4)/4;
+  printf("len: %i\n", len);
+
+  while ((p < end) &&                     // not passed end
+        ((*p & 1) ||                      // already allocated
+        (*p <= len))) {                   // too small
+    p = p + (*p & -2);                    // goto next block (word addressed)
   }
 
-  // // no room in heap
-  // if(p == end)
-  //   return -1;
+  // no room in heap
+  if(p == end)
+    return -1;
 
   // allocate
-  int newsize = ((bytes + 3)%4 == 0) ?
-    bytes + 3 : (((bytes + 3) >> 2) << 2) + 4;    // round up increment 4
+  int newsize = len;
   printf("newsize = %i\n", newsize);
   int oldsize = *p & -2;
   *p = newsize | 1;                      // set size & allocation
@@ -135,12 +131,13 @@ void Allocate (void* heap, int bytes) {
   printf("Header: Address[0x%p] ", p);
   printf("Size[%i] Allocated[%i] blockId[%i] payload[%i]\n",
     *p & -2, *p & 1, *(p+1), *(p+2));
+
   printf("%i\n", bID);
   return;
 }
 
 // Mike's (Remove name before submission)
-void Free (void* heap, int blockId) {
+void Free (char* heap, int blockId) {
   // find block
 
   // free block
@@ -148,7 +145,7 @@ void Free (void* heap, int blockId) {
   return;
 }
 
-void blockList (void* heap) {
+void blockList (char* heap) {
   /*
     reviewed the write up, we dont need a structure for this. blocklist will
     be called in main with the heap pointer. blockList will then parse the
@@ -161,12 +158,12 @@ void blockList (void* heap) {
 }
 
 // Johns (Remove name before submission)
-void writeHeap (void* heap, int blockId, char content, int bytes) {
+void writeHeap (char* heap, int blockId, char content, int bytes) {
 
 }
 
 // Johns (Remove name before submission)
-char* printHeap (void* heap, int blockId, int bytes) {
+char* printHeap (char* heap, int blockId, int bytes) {
   char* lololol = "skadoosh";
   return lololol;
 }
