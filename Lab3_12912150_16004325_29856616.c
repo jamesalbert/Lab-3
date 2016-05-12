@@ -97,7 +97,7 @@ void Allocate (char* heap, int bytes) {
       WORD increments.
 
       Example: Allocate 6  [12|1][0][6][payload][buffer 3]
-      First WORD tells us it is size 12 chunk and 1 is allocated. Second WORD
+      First WORD tells us it is 12 bytes and 1 is allocated. Second WORD
       tells us it is block 0. Next WORD tells us the payload is 6 bytes.
       Then the actual data, followed by a buffer of 3 bytes to make it 12.
   */
