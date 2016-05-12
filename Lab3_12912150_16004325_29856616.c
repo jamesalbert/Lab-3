@@ -14,21 +14,24 @@
 #define MAXARGS     128   // maximum amount of arguments
 #define MAXCMD      255   // maximum length of command
 #define HEAPSIZE    400   // size of heap
-#define TESTING     0
-#define DEBUG       1
-
-static int bID;
+#define TESTING     0     // 1 - main disabled, 0 - main enabled (submission)
+#define DEBUG       0     // 1 - debug shown, 0 - debug hidden
 
 // Prototypes
-int parsecommand(char*, char* opts[MAXARGS]);
 int Allocate(int*, int);
 int Free(int* heap, int);
 int blockList(int*);
 int writeHeap(int*, int, char, int);
 int printHeap(int*, int, int);
+int parsecommand(char*, char* opts[MAXARGS]);
 int* findBlockId(int*, int);
+bool isZero(int);
 
-// Mike's (Remove name before submission)
+// Global variables
+static int bID;
+
+
+// Main function
 #if TESTING == 0
 int main () {
   // variable declaration
@@ -47,10 +50,8 @@ int main () {
      gets(command);
      argc = parsecommand(command, argv);
 
-     if(strcmp(argv[0], "allocate") == 0) {
-       printf("Calling Allocate with %s\n", argv[1]);
+     if(strcmp(argv[0], "allocate") == 0)
        Allocate(heap, atoi(argv[1]));
-     }
      else if(strcmp(argv[0], "free") == 0)
        Free(heap, atoi(argv[1]));
      else if(strcmp(argv[0], "blocklist") == 0)
@@ -68,30 +69,11 @@ int main () {
 }
 #endif
 
-bool isZero(int param) {
-  return param == 0;
-}
 
-int parsecommand(char* command, char* opts[MAXARGS]) {
-  /* parsecommand
-      @command: full command from prompt
-      @opts: options to binary
+/*
+    FUNCTIONS
+*/
 
-      takes a full command (eg service nginx start) and places the
-      command name (service) and arguments ([nginx, start]) in opts.
-  */
-  int argc = 0;
-  char* delim = " \t\n";
-  char* tok = strtok(command, delim);
-  // first argument of opts must be the filename with path
-  opts[argc] = malloc(strlen(command)*sizeof(char));
-  strcpy(opts[argc], tok); // append command to binary name
-  for (tok = strtok(NULL, delim); tok != NULL; tok = strtok(NULL, delim))
-    opts[++argc] = tok;
-  return argc;
-}
-
-// Mike's (Remove name before submission)
 int Allocate (int* p, int bytes) {
   /* Allocate
       implicit list - header will contain size of block and allocation status
@@ -144,28 +126,12 @@ int Allocate (int* p, int bytes) {
   return 0;
 }
 
-// Mike's (Remove name before submission)
 int Free (int* p, int blockId) {
   if (isZero(blockId)) return -1;
   p = findBlockId(p, blockId);
   if(!p) return -1;
   *p = *p & -2;
   return 0;
-}
-
-int* findBlockId(int* p, int blockId) {
-  /*
-    helper function - give it pointer from start of heap and blockId
-    will return pointer to block that contains the blockId or return 0
-    if no block was found with that blockId
-  */
-  if (isZero(blockId)) return NULL;
-  int* end = p + (HEAPSIZE/4);
-  while((p < end) && *(p + 1) != blockId)
-    p = p + (*p & -2)/4;
-  if(p == end)
-    p = 0;
-  return p;
 }
 
 int blockList (int* heap) {
@@ -227,4 +193,47 @@ int printHeap(int* heap, int blockId, int bytes) {
   }
   printf("\n");
   return 0;
+}
+
+
+/*
+    HELPER FUNCTIONS
+*/
+
+int parsecommand(char* command, char* opts[MAXARGS]) {
+  /* parsecommand
+      @command: full command from prompt
+      @opts: options to binary
+
+      takes a full command (eg service nginx start) and places the
+      command name (service) and arguments ([nginx, start]) in opts.
+  */
+  int argc = 0;
+  char* delim = " \t\n";
+  char* tok = strtok(command, delim);
+  // first argument of opts must be the filename with path
+  opts[argc] = malloc(strlen(command)*sizeof(char));
+  strcpy(opts[argc], tok); // append command to binary name
+  for (tok = strtok(NULL, delim); tok != NULL; tok = strtok(NULL, delim))
+    opts[++argc] = tok;
+  return argc;
+}
+
+int* findBlockId(int* p, int blockId) {
+  /*
+    helper function - give it pointer from start of heap and blockId
+    will return pointer to block that contains the blockId or return 0
+    if no block was found with that blockId
+  */
+  if (isZero(blockId)) return NULL;
+  int* end = p + (HEAPSIZE/4);
+  while((p < end) && *(p + 1) != blockId)
+    p = p + (*p & -2)/4;
+  if(p == end)
+    p = 0;
+  return p;
+}
+
+bool isZero(int param) {
+  return param == 0;
 }
