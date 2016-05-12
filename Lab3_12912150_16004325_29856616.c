@@ -84,7 +84,7 @@ int parsecommand(char* command, char* opts[MAXARGS]) {
 }
 
 // Mike's (Remove name before submission)
-void Allocate (int* p, int bytes) {
+int Allocate (int* p, int bytes) {
   /* Allocate
       implicit list - header will contain size of block and allocation status
       first fit - search until first block that will fit
@@ -113,7 +113,7 @@ void Allocate (int* p, int bytes) {
 
   // no room in heap
   if(p == end)
-    return;
+    return -1;
 
   // allocate
   int newsize = len;
@@ -159,7 +159,7 @@ int* findBlockId(int* p, int blockId) {
   return p;
 }
 
-void blockList (int* heap) {
+int blockList (int* heap) {
   /*
     reviewed the write up, we dont need a structure for this. blocklist will
     be called in main with the heap pointer. blockList will then parse the
