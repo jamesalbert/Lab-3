@@ -219,7 +219,7 @@ int printHeap(int* heap, int blockId, int bytes) {
   }
   readPointer = (char*)(&(p[3]));
   int i = 0;
-  for(; i < bytes; i++) {
+  for(; i < bytes && i < p[2]; i++) {
     printf("%c", readPointer[i]);
     if(&(readPointer[i]) == end) {
       break;
