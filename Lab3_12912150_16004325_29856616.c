@@ -100,16 +100,12 @@ void Allocate (int* p, int bytes) {
       implicit list - header will contain size of block and allocation status
       first fit - search until first block that will fit
 
-      The heap will be WORD aligned (4 bytes for 32 bit system), the first byte
+      The heap will be WORD aligned (4 bytes for 32 bit system), the first WORD
       of the header will be the size of the allocation and the status.
-      The 2nd byte will be the ID of the block. The 3rd byte will be the size
+      The 2nd WORD will be the ID of the block. The 3rd WORD will be the size
       of the payload to prevent writeHeap() from exceeding the size of the
       payload. Then the payload and finally the buffer(unused) to align to
       WORD increments.
-
-      When accessing the payload, use "char* p = (char*)(heap + 12)" after
-      finding the correct block. This will create a 1 byte pointer at the
-      payload. use int* pointers to search blocks.
 
       Example: Allocate 6  [20|1][0][6][payload][buffer 2]
       First WORD tells us it is 20 bytes and 1 is allocated. Second WORD
@@ -183,7 +179,13 @@ void blockList (int* heap) {
 
 // Johns (Remove name before submission)
 void writeHeap (int* heap, int blockId, char content, int bytes) {
+  /*
+    When accessing the payload, use "char* p = (char*)(heap + 12)" after
+    finding the correct block. This will create a 1 byte pointer at the
+    payload. Can use helper function findBlockId() to get a pointer to the
+    block. Verify pointer isnt 0, block not found.
 
+  */
 }
 
 // Johns (Remove name before submission)
