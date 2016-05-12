@@ -18,9 +18,9 @@
 
 // Prototypes
 int parsecommand(char*, char* opts[MAXARGS]);
-void Allocate(int*, int);
+int Allocate(int*, int);
 void Free(int* heap, int);
-void blockList(int*);
+int blockList(int*);
 void writeHeap(int*, int, char, int);
 char* printHeap(int*, int, int);
 int* findBlockId(int*, int);
