@@ -26,6 +26,7 @@ char* printHeap(int*, int, int);
 int* findBlockId(int*, int);
 
 // Mike's (Remove name before submission)
+#if TESTING == 0
 int main () {
   // variable declaration
   char command[MAXCMD];
@@ -61,6 +62,7 @@ int main () {
   free(heap);
   return 0;
 }
+#endif
 
 int parsecommand(char* command, char* opts[MAXARGS]) {
   /* parsecommand
@@ -122,13 +124,17 @@ void Allocate (int* p, int bytes) {
   if(newsize < oldsize)
     *(p + newsize/4) = oldsize - newsize;  // set next block
 
+  #if DEBUG == 1
   printf("Header: Address[%p] ", p);
   // remove these debug lines before submission
   printf("Size[%i bytes] Allocated[%i] blockId[%i] payload[%i bytes]\n",
     *p & -2, *p & 1, *(p+1), *(p+2));
+  #endif
 
+  #if TESTING == 0
   printf("%i\n", bID);
-  return;
+  #endif
+  return 0;
 }
 
 // Mike's (Remove name before submission)
