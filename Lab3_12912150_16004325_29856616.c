@@ -124,7 +124,7 @@ void Allocate (char* heap, int bytes) {
   if(newsize < oldsize)
     *(p + newsize/4) = oldsize - newsize;  // set next block
 
-  printf("Header: Address[0x%p] ", p);
+  printf("Header: Address[%p] ", p);
   printf("Size[%i bytes] Allocated[%i] blockId[%i] payload[%i bytes]\n",
     *p & -2, *p & 1, *(p+1), *(p+2));
 
