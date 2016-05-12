@@ -192,37 +192,37 @@ int blockList (int* heap) {
 
 int writeHeap(int* heap, int blockId, char content, int bytes) {
   if (isZero(blockId) || isZero(bytes)) return -1;
-	int* p = (int*)heap;
-	char* insertionPointer;
+  int* p = (int*)heap;
+  char* insertionPointer;
   if((p = findBlockId(p, blockId)) == NULL) {
-		printf("Invalid blockId: %d\n", blockId);
-		return -1;
-	}
-	insertionPointer = (char*)(&(p[3]));
-	int i = 0;
-	for(; i < bytes && i < p[2]; i++) {
-	  insertionPointer[i] = content;
-	}
+    printf("Invalid blockId: %d\n", blockId);
+    return -1;
+  }
+  insertionPointer = (char*)(&(p[3]));
+  int i = 0;
+  for(; i < bytes && i < p[2]; i++) {
+    insertionPointer[i] = content;
+  }
   return 0;
 }
 
 int printHeap(int* heap, int blockId, int bytes) {
   if (isZero(blockId) || isZero(bytes)) return -1;
   int* p = (int*)heap;
-	char* readPointer;
-	char* end = (char*)p + HEAPSIZE;
+  char* readPointer;
+  char* end = (char*)p + HEAPSIZE;
   if((p = findBlockId(p, blockId)) == NULL) {
     printf("Invalid blockId: %d\n", blockId);
     return -1;
   }
-	readPointer = (char*)(&(p[3]));
-	int i = 0;
-	for(; i < bytes; i++) {
+  readPointer = (char*)(&(p[3]));
+  int i = 0;
+  for(; i < bytes; i++) {
     printf("%c", readPointer[i]);
     if(&(readPointer[i]) == end) {
       break;
     }
-	}
-	printf("\n");
+  }
+  printf("\n");
   return 0;
 }
