@@ -59,6 +59,7 @@ int main () {
       break;
     }
   }
+
   free(heap);
   return 0;
 }
@@ -105,31 +106,31 @@ void Allocate (char* heap, int bytes) {
   int* end = p + (HEAPSIZE/4);            // pointer to end of heap
 
   // find free block
-  int len = ((bytes + 12)%4 == 0) ? (bytes + 12)/4 : ((((bytes + 12) >> 2) << 2) + 4)/4;
-  printf("len: %i\n", len);
-
+  int len = ((bytes + 12)%4 == 0) ? (bytes + 12) : ((((bytes + 12) >> 2) << 2) + 4);
   while ((p < end) &&                     // not passed end
         ((*p & 1) ||                      // already allocated
         (*p <= len))) {                   // too small
-    p = p + (*p & -2);                    // goto next block (word addressed)
+    int offset = *p;
+    offset = offset & -2;
+    offset = offset/4;
+    p = p + offset;                  // goto next block (word addressed)
   }
 
   // no room in heap
   if(p == end)
-    return -1;
+    return;
 
   // allocate
   int newsize = len;
-  printf("newsize = %i\n", newsize);
   int oldsize = *p & -2;
   *p = newsize | 1;                      // set size & allocation
   *(p + 1) = ++bID;                      // set blockId
   *(p + 2) = bytes;                      // set payload
   if(newsize < oldsize)
-    *(p + newsize) = oldsize - newsize;  // set next block
+    *(p + newsize/4) = oldsize - newsize;  // set next block
 
   printf("Header: Address[0x%p] ", p);
-  printf("Size[%i] Allocated[%i] blockId[%i] payload[%i]\n",
+  printf("Size[%i bytes] Allocated[%i] blockId[%i] payload[%i bytes]\n",
     *p & -2, *p & 1, *(p+1), *(p+2));
 
   printf("%i\n", bID);
