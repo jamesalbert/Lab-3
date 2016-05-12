@@ -120,9 +120,8 @@ int Allocate (int* p, int bytes) {
     p = p + (*p & -2)/4;                  // goto next block (word addressed)
 
   // no room in heap
-  if(p == end)
+  if(p >= end)
     return -1;
-
   // allocate
   int newsize = len;
   int oldsize = *p & -2;
