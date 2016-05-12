@@ -16,7 +16,7 @@
 
 // Prototypes
 int parsecommand(char*, char* opts[MAXARGS]);
-int Allocate(void*, int);
+void Allocate(void*, int);
 void Free(void* heap, int);
 void blockList(void*);
 void writeHeap(void*, int, char, int);
@@ -42,7 +42,7 @@ int main () {
     argc = parsecommand(command, argv);
 
     if(strcmp(argv[0], "allocate") == 0) {
-      printf("%i\n", Allocate(heap, atoi(argv[1])));
+      Allocate(heap, atoi(argv[1]));
     }
     else if(strcmp(argv[0], "free") == 0) {
       Free(heap, atoi(argv[1]));
@@ -83,7 +83,7 @@ int parsecommand(char* command, char* opts[MAXARGS]) {
 }
 
 // Mike's (Remove name before submission)
-int Allocate (void* heap, int bytes) {
+void Allocate (void* heap, int bytes) {
   /* Allocate
       implicit list - header will contain size of block and allocation status
       first fit - search until first block that will fit
@@ -100,32 +100,43 @@ int Allocate (void* heap, int bytes) {
       tells us it is block 0. Next byte tells us the payload is 6 bytes.
       Then the actual data, followed by a buffer of 3 to make it 12.
   */
-  void* end = heap + 400;
+  int* p = (int*)heap;
+  int* end = p + 400;
 
-  printf("Heap: 0x%p\n", heap);
-  printf("End : 0x%p\n", end);
   static int bID = 0;                       // block ID for new blocks
 
-  // find free block
-  while( (heap < end)                       // within heap
-         && ((*(int*)heap & 1)              // block is allocated
-         || (*((int*)heap + 2) < bytes)))   // payload too small
-    heap = heap + (*(int*)heap & -2);       // increment pointer to next block
+  printf("p = %p\n", p);
 
-  // no room in heap
-  if(heap == end)
-    return -1;
+  // find free block
+  while ((p < end) && ((*p & 1) || (*p <= (bytes + 3)))) {
+    printf("Header: Address[0x%p] ", p);
+    printf("Size[%i] Allocated[%i] blockId[%i] payload[%i]\n",
+      *p & -2, *p & 1, *(p+1), *(p+2));
+    printf("p = %p\n", p);
+    p = p + (*p & -2);
+    printf("p = %p\n", p);
+  }
+
+  // // no room in heap
+  // if(p == end)
+  //   return -1;
 
   // allocate
-  int newsize = (((bytes + 3) >> 2) << 2) + 4;    // round up increment 4
-  int oldsize = *(int*)heap & -2;
-  *(int*)heap = newsize | 1;                      // set size & allocation
-  *((int*)heap + 1) = ++bID;                      // set blockId
-  *((int*)heap + 2) = bytes;                      // set payload
+  int newsize = ((bytes + 3)%4 == 0) ?
+    bytes + 3 : (((bytes + 3) >> 2) << 2) + 4;    // round up increment 4
+  printf("newsize = %i\n", newsize);
+  int oldsize = *p & -2;
+  *p = newsize | 1;                      // set size & allocation
+  *(p + 1) = ++bID;                      // set blockId
+  *(p + 2) = bytes;                      // set payload
   if(newsize < oldsize)
-    *((int*)heap + newsize) = oldsize - newsize;  // set next block
+    *(p + newsize) = oldsize - newsize;  // set next block
 
-  return bID;
+  printf("Header: Address[0x%p] ", p);
+  printf("Size[%i] Allocated[%i] blockId[%i] payload[%i]\n",
+    *p & -2, *p & 1, *(p+1), *(p+2));
+  printf("%i\n", bID);
+  return;
 }
 
 // Mike's (Remove name before submission)
