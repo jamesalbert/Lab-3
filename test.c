@@ -67,16 +67,35 @@ void test_free(void) {
   CU_ASSERT(Free(heap, 4) == 0);
 }
 
+void test_write_heap(void) {
+  Allocate(heap, 10);
+  Allocate(heap, 4);
+  Allocate(heap, 6);
+  CU_ASSERT(writeHeap(heap, 2, 'A', 10) == 0);
+  CU_ASSERT(writeHeap(heap, 1, 'B', 10) == 0);
+  CU_ASSERT(writeHeap(heap, 3, 'C', 2) == 0);
+  CU_ASSERT(writeHeap(heap, 4, 'D', 2) == -1);
+  Free(heap, 1);
+  Free(heap, 2);
+  Free(heap, 3);
+}
+
+void test_print_heap(void) {
+
+}
+
 int main() {
 	CU_pSuite aSuite = NULL,
             fSuite = NULL,
-            pSuite = NULL;
+            pSuite = NULL,
+            hSuite = NULL;
 	if (CUE_SUCCESS != CU_initialize_registry())
 		return CU_get_error();
 
 	aSuite = CU_add_suite("allocate suite", init_suite, clean_suite);
 	fSuite = CU_add_suite("free suite", init_suite, clean_suite);
 	pSuite = CU_add_suite("parsecommand suite", init_suite, clean_suite);
+	hSuite = CU_add_suite("heap suite", init_suite, clean_suite);
 	if (aSuite == NULL || fSuite == NULL || pSuite == NULL) {
 		CU_cleanup_registry();
 		return CU_get_error();
@@ -84,6 +103,8 @@ int main() {
 
 	if (CU_add_test(pSuite, "test parsecommand", test_parsecommand) == NULL ||
 			CU_add_test(fSuite, "test free", test_free) == NULL ||
+			CU_add_test(hSuite, "test write heap", test_write_heap) == NULL ||
+			CU_add_test(hSuite, "test print heap", test_print_heap) == NULL ||
 			CU_add_test(aSuite, "test allocate max", test_allocate_maxing) == NULL ||
 			CU_add_test(aSuite, "test allocate norm", test_allocate_normal) == NULL) {
 		CU_cleanup_registry();
