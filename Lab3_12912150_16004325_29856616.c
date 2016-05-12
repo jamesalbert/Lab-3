@@ -107,6 +107,10 @@ void Allocate (char* heap, int bytes) {
       payload. Then the payload and finally the buffer(unused) to align to
       WORD increments.
 
+      When accessing the payload, use "char* p = (char*)(heap + 12)" after
+      finding the correct block. This will create a 1 byte pointer at the
+      payload. use int* pointers to search blocks.
+
       Example: Allocate 6  [20|1][0][6][payload][buffer 2]
       First WORD tells us it is 20 bytes and 1 is allocated. Second WORD
       tells us it is block 0. Next WORD tells us the payload is 6 bytes.
@@ -156,7 +160,6 @@ void Free (char* heap, int blockId) {
       return;
 
   *p = *p & -2;
-
 
   return;
 }
