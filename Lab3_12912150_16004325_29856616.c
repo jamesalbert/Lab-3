@@ -180,7 +180,7 @@ void blockList (int* heap) {
 // Johns (Remove name before submission)
 void writeHeap (int* heap, int blockId, char content, int bytes) {
   /*
-    When accessing the payload, use "char* p = (char*)(heap + 12)" after
+    When accessing the payload, use "char* p = (char*)(heap + 3)" after
     finding the correct block. This will create a 1 byte pointer at the
     payload. Can use helper function findBlockId() to get a pointer to the
     block. Verify pointer isnt 0, block not found.
