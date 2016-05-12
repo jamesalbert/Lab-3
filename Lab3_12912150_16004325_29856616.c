@@ -34,37 +34,42 @@ int main () {
   *(int*)heap = HEAPSIZE;
 
   // Loop - fetch command, call functions
-  while(1) {
-    printf("> ");
-    gets(command);
+  // while(1) {
+  //   printf("> ");
+  //   gets(command);
+  //
+  //   argc = parsecommand(command, argv);
+  //
+  //   if(strcmp(argv[0], "allocate") == 0) {
+  //     printf("Calling Allocate with %s\n", argv[1]);
+  //     Allocate(heap, atoi(argv[1]));
+  //   }
+  //   else if(strcmp(argv[0], "free") == 0) {
+  //     Free(heap, atoi(argv[1]));
+  //   }
+  //   else if(strcmp(argv[0], "blocklist") == 0) {
+  //     blockList(heap);
+  //   }
+  //   else if(strcmp(argv[0], "writeheap") == 0) {
+  //     writeHeap(heap, atoi(argv[1]), argv[2], atoi(argv[3]));
+  //   }
+  //   else if(strcmp(argv[0], "printheap") == 0) {
+  //     printHeap(heap, atoi(argv[1]), atoi(argv[2]));
+  //   }
+  //   else if(strcmp(argv[0], "quit") == 0) {
+  //     break;
+  //   }
+  // }
 
-    argc = parsecommand(command, argv);
-
-    if(strcmp(argv[0], "allocate") == 0) {
-      printf("Calling Allocate with %i\n", atoi(argv[1]));
-      Allocate(heap, atoi(argv[1]));
-    }
-    else if(strcmp(argv[0], "free") == 0) {
-      Free(heap, atoi(argv[1]));
-    }
-    else if(strcmp(argv[0], "blocklist") == 0) {
-      blockList(heap);
-    }
-    else if(strcmp(argv[0], "writeheap") == 0) {
-      writeHeap(heap, atoi(argv[1]), argv[2], atoi(argv[3]));
-    }
-    else if(strcmp(argv[0], "printheap") == 0) {
-      printHeap(heap, atoi(argv[1]), atoi(argv[2]));
-    }
-    else if(strcmp(argv[0], "quit") == 0) {
-      break;
-    }
-  }
-
-  // Allocate(heap, 4);
-  // Allocate(heap, 5);
-  // Allocate(heap, 6);
-  // Allocate(heap, 7);
+  Allocate(heap, 4);
+  Allocate(heap, 10);
+  Allocate(heap, 6);
+  Allocate(heap, 7);
+  Allocate(heap, 2);
+  Allocate(heap, 30);
+  Free(heap, 6);
+  Allocate(heap, 14);
+  Allocate(heap, 18);
 
   free(heap);
   return 0;
@@ -115,12 +120,8 @@ void Allocate (char* heap, int bytes) {
   int len = ((bytes + 12)%4 == 0) ? (bytes + 12) : ((((bytes + 12) >> 2) << 2) + 4);
   while ((p < end) &&                     // not passed end
         ((*p & 1) ||                      // already allocated
-        (*p <= len))) {                   // too small
-    int offset = *p;
-    offset = offset & -2;
-    offset = offset/4;
-    p = p + offset;                  // goto next block (word addressed)
-  }
+        (*p <= len)))                     // too small
+    p = p + (*p & -2)/4;                  // goto next block (word addressed)
 
   // no room in heap
   if(p == end)
@@ -145,9 +146,17 @@ void Allocate (char* heap, int bytes) {
 
 // Mike's (Remove name before submission)
 void Free (char* heap, int blockId) {
-  // find block
+  int* p = (int*)heap;                    // typecast to integer for management
+  int* end = p + (HEAPSIZE/4);            // pointer to end of heap
 
-  // free block
+  while((p < end) && *(p + 1) != blockId)
+    p = p + (*p & -2)/4;
+
+  if(p == end)
+      return;
+
+  *p = *p & -2;
+
 
   return;
 }
