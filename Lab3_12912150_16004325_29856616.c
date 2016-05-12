@@ -34,42 +34,26 @@ int main () {
   *(int*)heap = HEAPSIZE;
 
   // Loop - fetch command, call functions
-  // while(1) {
-  //   printf("> ");
-  //   gets(command);
-  //
-  //   argc = parsecommand(command, argv);
-  //
-  //   if(strcmp(argv[0], "allocate") == 0) {
-  //     printf("Calling Allocate with %s\n", argv[1]);
-  //     Allocate(heap, atoi(argv[1]));
-  //   }
-  //   else if(strcmp(argv[0], "free") == 0) {
-  //     Free(heap, atoi(argv[1]));
-  //   }
-  //   else if(strcmp(argv[0], "blocklist") == 0) {
-  //     blockList(heap);
-  //   }
-  //   else if(strcmp(argv[0], "writeheap") == 0) {
-  //     writeHeap(heap, atoi(argv[1]), argv[2], atoi(argv[3]));
-  //   }
-  //   else if(strcmp(argv[0], "printheap") == 0) {
-  //     printHeap(heap, atoi(argv[1]), atoi(argv[2]));
-  //   }
-  //   else if(strcmp(argv[0], "quit") == 0) {
-  //     break;
-  //   }
-  // }
+  while(1) {
+     printf("> ");
+     gets(command);
+     argc = parsecommand(command, argv);
 
-  Allocate(heap, 4);
-  Allocate(heap, 10);
-  Allocate(heap, 6);
-  Allocate(heap, 7);
-  Allocate(heap, 2);
-  Allocate(heap, 30);
-  Free(heap, 6);
-  Allocate(heap, 14);
-  Allocate(heap, 18);
+     if(strcmp(argv[0], "allocate") == 0) {
+       printf("Calling Allocate with %s\n", argv[1]);
+       Allocate(heap, atoi(argv[1]));
+     }
+     else if(strcmp(argv[0], "free") == 0)
+       Free(heap, atoi(argv[1]));
+     else if(strcmp(argv[0], "blocklist") == 0)
+       blockList(heap);
+     else if(strcmp(argv[0], "writeheap") == 0)
+       writeHeap(heap, atoi(argv[1]), (char)argv[2], atoi(argv[3]));
+     else if(strcmp(argv[0], "printheap") == 0)
+       printHeap(heap, atoi(argv[1]), atoi(argv[2]));
+     else if(strcmp(argv[0], "quit") == 0)
+       break;
+  }
 
   free(heap);
   return 0;
