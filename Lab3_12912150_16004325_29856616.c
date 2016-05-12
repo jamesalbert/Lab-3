@@ -38,7 +38,6 @@ int main () {
   char command[MAXCMD];
   int* heap = malloc(HEAPSIZE);
   char* argv[MAXARGS];
-  int argc;
 
   // memory management
   *heap = HEAPSIZE;
@@ -48,7 +47,7 @@ int main () {
   while(1) {
      printf("> ");
      gets(command);
-     argc = parsecommand(command, argv);
+     parsecommand(command, argv);
 
      if(strcmp(argv[0], "allocate") == 0)
        Allocate(heap, atoi(argv[1]));
@@ -98,7 +97,7 @@ int Allocate (int* p, int bytes) {
   int len = ((bytes + 12)%4 == 0) ? (bytes + 12) : ((((bytes + 12) >> 2) << 2) + 4);
   while ((p < end) &&                     // not passed end
         ((*p & 1) ||                      // already allocated
-        (*p <= len)))                     // too small
+        (*p < len)))                     // too small
     p = p + (*p & -2)/4;                  // goto next block (word addressed)
 
   // no room in heap
@@ -134,16 +133,7 @@ int Free (int* p, int blockId) {
   return 0;
 }
 
-int blockList (int* heap) {
-  /*
-    reviewed the write up, we dont need a structure for this. blocklist will
-    be called in main with the heap pointer. blockList will then parse the
-    heap printing the information.
-
-    see allocate comments for design of the heap
-  */
-
-  int* p = (int*)heap;                    // typecast to integer for management
+int blockList (int* p) {
   int* end = p + (HEAPSIZE/4);            // pointer to end of heap
   if (p == end)
     return -1;
@@ -156,9 +146,8 @@ int blockList (int* heap) {
   return 0;
 }
 
-int writeHeap(int* heap, int blockId, char content, int bytes) {
+int writeHeap(int* p, int blockId, char content, int bytes) {
   if (isZero(blockId) || isZero(bytes)) return -1;
-  int* p = (int*)heap;
   char* insertionPointer;
   if((p = findBlockId(p, blockId)) == NULL) {
     #if DEBUG == 1
@@ -167,16 +156,15 @@ int writeHeap(int* heap, int blockId, char content, int bytes) {
     return -1;
   }
   insertionPointer = (char*)(&(p[3]));
-  int i = 0;
-  for(; i < bytes && i < p[2]; i++) {
+  int i;
+  for(i = 0; i < bytes && i < p[2]; i++) {
     insertionPointer[i] = content;
   }
   return 0;
 }
 
-int printHeap(int* heap, int blockId, int bytes) {
+int printHeap(int* p, int blockId, int bytes) {
   if (isZero(blockId) || isZero(bytes)) return -1;
-  int* p = (int*)heap;
   char* readPointer;
   char* end = (char*)p + HEAPSIZE;
   if((p = findBlockId(p, blockId)) == NULL) {
@@ -184,8 +172,8 @@ int printHeap(int* heap, int blockId, int bytes) {
     return -1;
   }
   readPointer = (char*)(&(p[3]));
-  int i = 0;
-  for(; i < bytes && i < p[2]; i++) {
+  int i;
+  for(i = 0; i < bytes && i < p[2]; i++) {
     printf("%c", readPointer[i]);
     if(&(readPointer[i]) == end) {
       break;
