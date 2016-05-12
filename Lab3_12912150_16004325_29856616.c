@@ -16,22 +16,23 @@
 
 // Prototypes
 int parsecommand(char*, char* opts[MAXARGS]);
-void Allocate(char*, int);
-void Free(char* heap, int);
-void blockList(char*);
-void writeHeap(char*, int, char, int);
-char* printHeap(char*, int, int);
+void Allocate(int*, int);
+void Free(int* heap, int);
+void blockList(int*);
+void writeHeap(int*, int, char, int);
+char* printHeap(int*, int, int);
+int* findBlockId(int*, int);
 
 // Mike's (Remove name before submission)
 int main () {
   // variable declaration
   char command[MAXCMD];
-  char* heap = malloc(HEAPSIZE);
+  int* heap = malloc(HEAPSIZE);
   char* argv[MAXARGS];
   int argc;
 
   // memory management
-  *(int*)heap = HEAPSIZE;
+  *heap = HEAPSIZE;
 
   // Loop - fetch command, call functions
   while(1) {
@@ -79,21 +80,17 @@ int parsecommand(char* command, char* opts[MAXARGS]) {
 }
 
 // Mike's (Remove name before submission)
-void Allocate (char* heap, int bytes) {
+void Allocate (int* p, int bytes) {
   /* Allocate
       implicit list - header will contain size of block and allocation status
       first fit - search until first block that will fit
 
-      The heap will be WORD aligned (4 bytes for 32 bit system), the first byte
+      The heap will be WORD aligned (4 bytes for 32 bit system), the first WORD
       of the header will be the size of the allocation and the status.
-      The 2nd byte will be the ID of the block. The 3rd byte will be the size
+      The 2nd WORD will be the ID of the block. The 3rd WORD will be the size
       of the payload to prevent writeHeap() from exceeding the size of the
       payload. Then the payload and finally the buffer(unused) to align to
       WORD increments.
-
-      When accessing the payload, use "char* p = (char*)(heap + 12)" after
-      finding the correct block. This will create a 1 byte pointer at the
-      payload. use int* pointers to search blocks.
 
       Example: Allocate 6  [20|1][0][6][payload][buffer 2]
       First WORD tells us it is 20 bytes and 1 is allocated. Second WORD
@@ -101,7 +98,6 @@ void Allocate (char* heap, int bytes) {
       Then the actual data, followed by a buffer of 2 bytes to make it 12.
   */
   static int bID = 0;                     // block ID for new blocks
-  int* p = (int*)heap;                    // typecast to integer for management
   int* end = p + (HEAPSIZE/4);            // pointer to end of heap
 
   // find free block
@@ -125,6 +121,7 @@ void Allocate (char* heap, int bytes) {
     *(p + newsize/4) = oldsize - newsize;  // set next block
 
   printf("Header: Address[%p] ", p);
+  // remove these debug lines before submission
   printf("Size[%i bytes] Allocated[%i] blockId[%i] payload[%i bytes]\n",
     *p & -2, *p & 1, *(p+1), *(p+2));
 
@@ -133,22 +130,28 @@ void Allocate (char* heap, int bytes) {
 }
 
 // Mike's (Remove name before submission)
-void Free (char* heap, int blockId) {
-  int* p = (int*)heap;                    // typecast to integer for management
-  int* end = p + (HEAPSIZE/4);            // pointer to end of heap
-
-  while((p < end) && *(p + 1) != blockId)
-    p = p + (*p & -2)/4;
-
-  if(p == end)
-      return;
-
+void Free (int* p, int blockId) {
+  p = findBlockId(p, blockId);
+  if(!p) return;
   *p = *p & -2;
-
   return;
 }
 
-void blockList (char* heap) {
+int* findBlockId(int* p, int blockId) {
+  /*
+    helper function - give it pointer from start of heap and blockId
+    will return pointer to block that contains the blockId or return 0
+    if no block was found with that blockId
+  */
+  int* end = p + (HEAPSIZE/4);
+  while((p < end) && *(p + 1) != blockId)
+    p = p + (*p & -2)/4;
+  if(p == end)
+    p = 0;
+  return p;
+}
+
+void blockList (int* heap) {
   /*
     reviewed the write up, we dont need a structure for this. blocklist will
     be called in main with the heap pointer. blockList will then parse the
@@ -169,12 +172,19 @@ void blockList (char* heap) {
 }
 
 // Johns (Remove name before submission)
-void writeHeap (char* heap, int blockId, char content, int bytes) {
+void writeHeap (int* heap, int blockId, char content, int bytes) {
+  /*
+    When accessing the payload, use "char* p = (char*)(heap + 3)" after
+    finding the correct block. This will create a 1 byte pointer at the
+    payload. Can use helper function findBlockId() to get a pointer to the
+    block. Verify pointer isnt 0, block not found.
+    *(heap + 2) will give you the size of the payload
 
+  */
 }
 
 // Johns (Remove name before submission)
-char* printHeap (char* heap, int blockId, int bytes) {
+char* printHeap (int* heap, int blockId, int bytes) {
   char* lololol = "skadoosh";
   return lololol;
 }
