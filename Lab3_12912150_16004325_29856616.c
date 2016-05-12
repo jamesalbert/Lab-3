@@ -17,6 +17,8 @@
 #define TESTING     0
 #define DEBUG       1
 
+static int bID;
+
 // Prototypes
 int parsecommand(char*, char* opts[MAXARGS]);
 int Allocate(int*, int);
@@ -37,6 +39,7 @@ int main () {
 
   // memory management
   *heap = HEAPSIZE;
+  bID = 0;
 
   // Loop - fetch command, call functions
   while(1) {
