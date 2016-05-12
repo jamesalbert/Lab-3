@@ -41,6 +41,7 @@ int main () {
     argc = parsecommand(command, argv);
 
     if(strcmp(argv[0], "allocate") == 0) {
+      printf("Calling Allocate with %i\n", atoi(argv[1]));
       Allocate(heap, atoi(argv[1]));
     }
     else if(strcmp(argv[0], "free") == 0) {
@@ -59,6 +60,11 @@ int main () {
       break;
     }
   }
+
+  // Allocate(heap, 4);
+  // Allocate(heap, 5);
+  // Allocate(heap, 6);
+  // Allocate(heap, 7);
 
   free(heap);
   return 0;
@@ -96,10 +102,10 @@ void Allocate (char* heap, int bytes) {
       payload. Then the payload and finally the buffer(unused) to align to
       WORD increments.
 
-      Example: Allocate 6  [12|1][0][6][payload][buffer 3]
-      First WORD tells us it is 12 bytes and 1 is allocated. Second WORD
+      Example: Allocate 6  [20|1][0][6][payload][buffer 2]
+      First WORD tells us it is 20 bytes and 1 is allocated. Second WORD
       tells us it is block 0. Next WORD tells us the payload is 6 bytes.
-      Then the actual data, followed by a buffer of 3 bytes to make it 12.
+      Then the actual data, followed by a buffer of 2 bytes to make it 12.
   */
   static int bID = 0;                     // block ID for new blocks
   int* p = (int*)heap;                    // typecast to integer for management
