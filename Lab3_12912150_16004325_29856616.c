@@ -155,6 +155,13 @@ int writeHeap(int* p, int blockId, char content, int bytes) {
     #endif
     return -1;
   }
+  if((*p & 1) ==0)
+  {
+    #if DEBUG == 1
+    printf("Invalid blockId: %d\n", blockId);
+    #endif
+    return -1;
+  }
   insertionPointer = (char*)(&(p[3]));
   int i;
   for(i = 0; i < bytes && i < p[2]; i++) {
@@ -168,7 +175,16 @@ int printHeap(int* p, int blockId, int bytes) {
   char* readPointer;
   char* end = (char*)p + HEAPSIZE;
   if((p = findBlockId(p, blockId)) == NULL) {
+    #if DEBUG == 1
     printf("Invalid blockId: %d\n", blockId);
+    #endif
+    return -1;
+  }
+  if((*p & 1) ==0)
+  {
+    #if DEBUG == 1
+    printf("Invalid blockId: %d\n", blockId);
+    #endif
     return -1;
   }
   readPointer = (char*)(&(p[3]));
