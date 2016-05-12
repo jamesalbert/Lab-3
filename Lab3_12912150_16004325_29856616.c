@@ -184,6 +184,7 @@ void writeHeap (int* heap, int blockId, char content, int bytes) {
     finding the correct block. This will create a 1 byte pointer at the
     payload. Can use helper function findBlockId() to get a pointer to the
     block. Verify pointer isnt 0, block not found.
+    *(heap + 2) will give you the size of the payload
 
   */
 }
