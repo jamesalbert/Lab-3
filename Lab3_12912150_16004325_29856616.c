@@ -213,7 +213,7 @@ int printHeap(int* heap, int blockId, int bytes) {
   int* p = (int*)heap;
   char* readPointer;
   char* end = (char*)p + HEAPSIZE;
-  if((p = findBlockId(p, blockId)) == NULL) {
+  if((p = findBlockId(p, blockId)) == NULL || !(*p & 1)) {
     printf("Invalid blockId: %d\n", blockId);
     return -1;
   }
