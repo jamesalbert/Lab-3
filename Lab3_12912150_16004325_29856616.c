@@ -191,7 +191,3 @@ char* printHeap (int* heap, int blockId, int bytes) {
   char* lololol = "skadoosh";
   return lololol;
 }
-
-void quit() {
-
-}
