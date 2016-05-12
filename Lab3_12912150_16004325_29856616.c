@@ -168,13 +168,17 @@ int blockList (int* heap) {
     see allocate comments for design of the heap
   */
 
-  int bID = 0;
   int* p = (int*)heap;                    // typecast to integer for management
   int* end = p + (HEAPSIZE/4);            // pointer to end of heap
+  if (p == end)
+    return -1;
   printf("Size\t\tAllocated\t\tStart\t\tEnd\n");
-  for (; p + (*p & -2)/4 != end && ++bID > 0; p = p + (*p & -2)/4)
-    printf("%i\t\t%i\t\t%p\t\t%p\n", *p & -2, *p & 1, p, p + ((*p & -2) / 4)); // just stuff :)
-  return;
+  for (; p + (*p & -2)/4 != end; p = p + (*p & -2)/4) {
+    intptr_t payloadEnd = (long)p;
+    payloadEnd += (*p & -2) - 1;
+    printf("%i\t\t%i\t\t%p\t\t%p\n", *p & -2, *p & 1, p, (int*)payloadEnd); // just stuff :)
+  }
+  return 0;
 }
 
 // Johns (Remove name before submission)
