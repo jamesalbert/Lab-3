@@ -157,6 +157,14 @@ void blockList (char* heap) {
     see allocate comments for design of the heap
   */
 
+  int bID = 0;
+  int* p = (int*)heap;                    // typecast to integer for management
+  int* end = p + (HEAPSIZE/4);            // pointer to end of heap
+  printf("Size\t\tAllocated\t\tStart\t\tEnd\n");
+  while (p + (*p & -2)/4 != end && ++bID > 0) {
+    printf("%i\t\t%i\t\t%p\t\t%p\n", *p & -2, *p & 1, p, p + ((*p & -2) / 4)); // just stuff :)
+    p = p + (*p & -2)/4;                  // goto next block (word addressed)
+  }
   return;
 }
 
