@@ -181,7 +181,7 @@ int blockList (int* heap) {
   int* end = p + (HEAPSIZE/4);            // pointer to end of heap
   if (p == end)
     return -1;
-  printf("Size\t\tAllocated\t\tStart\t\tEnd\n");
+  printf("Size\t\tAllocated\tStart\t\t\tEnd\n");
   for (; p + (*p & -2)/4 != end; p = p + (*p & -2)/4) {
     intptr_t payloadEnd = (long)p;
     payloadEnd += (*p & -2) - 1;
