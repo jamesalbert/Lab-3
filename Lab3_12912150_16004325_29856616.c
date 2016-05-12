@@ -52,7 +52,7 @@ int main () {
      else if(strcmp(argv[0], "blocklist") == 0)
        blockList(heap);
      else if(strcmp(argv[0], "writeheap") == 0)
-       writeHeap(heap, atoi(argv[1]), (char)argv[2], atoi(argv[3]));
+       writeHeap(heap, atoi(argv[1]), argv[2][0], atoi(argv[3]));
      else if(strcmp(argv[0], "printheap") == 0)
        printHeap(heap, atoi(argv[1]), atoi(argv[2]));
      else if(strcmp(argv[0], "quit") == 0)
@@ -181,20 +181,43 @@ int blockList (int* heap) {
   return 0;
 }
 
-// Johns (Remove name before submission)
-void writeHeap (int* heap, int blockId, char content, int bytes) {
-  /*
-    When accessing the payload, use "char* p = (char*)(heap + 3)" after
-    finding the correct block. This will create a 1 byte pointer at the
-    payload. Can use helper function findBlockId() to get a pointer to the
-    block. Verify pointer isnt 0, block not found.
-    *(heap + 2) will give you the size of the payload
-
-  */
+void writeHeap(int* heap, int blockId, char content, int bytes)
+{
+	int* p = (int*)heap;
+	char* insertionPointer;
+    if((p = findBlockId(p, blockId)) == NULL) 
+	{
+		printf("Invalid blockId: %d\n", blockId);
+		return;
+	}
+	insertionPointer = (char*)(&(p[3]));
+	int i = 0;
+	for(; i < bytes && i < p[2]; i++)
+	{
+	    insertionPointer[i] = content;
+	}
 }
 
-// Johns (Remove name before submission)
-char* printHeap (int* heap, int blockId, int bytes) {
-  char* lololol = "skadoosh";
-  return lololol;
+char* printHeap(int* heap, int blockId, int bytes)
+{
+    int* p = (int*)heap;
+	char* readPointer;
+	char* end = (char*)p + HEAPSIZE;
+    if((p = findBlockId(p, blockId)) == NULL) 
+	{
+		printf("Invalid blockId: %d\n", blockId);
+		return;
+	}
+	readPointer = (char*)(&(p[3]));
+	int i = 0;
+	for(; i < bytes; i++)
+	{
+	    printf("%c", readPointer[i]);
+	    if(&(readPointer[i]) == end)
+	    {
+	    	break;
+	    }
+	}
+	printf("\n");
 }
+
