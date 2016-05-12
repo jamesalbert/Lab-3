@@ -13,6 +13,8 @@
 #define MAXARGS     128   // maximum amount of arguments
 #define MAXCMD      255   // maximum length of command
 #define HEAPSIZE    400   // size of heap
+#define TESTING     0
+#define DEBUG       1
 
 // Prototypes
 int parsecommand(char*, char* opts[MAXARGS]);
