@@ -26,6 +26,11 @@ int printHeap(int*, int, int);
 int parsecommand(char*, char* opts[MAXARGS]);
 int* findBlockId(int*, int);
 bool isZero(int);
+bool nextInHeap(int*, int*);
+bool isAllocated(int*);
+bool isValid(int*, int);
+void nextBlock(int**);
+bool hasBlockId(int*, int);
 
 // Global variables
 static int bID;
@@ -98,7 +103,7 @@ int Allocate (int* p, int bytes) {
   while ((p < end) &&                     // not passed end
         ((*p & 1) ||                      // already allocated
         (*p < len)))                     // too small
-    p = p + (*p & -2)/4;                  // goto next block (word addressed)
+    nextBlock(&p);                  // goto next block (word addressed)
 
   // no room in heap
   if(p >= end)
@@ -138,7 +143,7 @@ int blockList (int* p) {
   if (p == end)
     return -1;
   printf("Size\t\tAllocated\tStart\t\t\tEnd\n");
-  for (; p + (*p & -2)/4 != end; p = p + (*p & -2)/4) {
+  for (; nextInHeap(p, end) ; nextBlock(&p)) {
     intptr_t payloadEnd = (long)p;
     payloadEnd += (*p & -2) - 1;
     printf("%i\t\t%i\t\t%p\t\t%p\n", *p & -2, *p & 1, p, (int*)payloadEnd); // just stuff :)
@@ -149,15 +154,8 @@ int blockList (int* p) {
 int writeHeap(int* p, int blockId, char content, int bytes) {
   if (isZero(blockId) || isZero(bytes)) return -1;
   char* insertionPointer;
-  if((p = findBlockId(p, blockId)) == NULL) {
-    #if DEBUG == 1
-    printf("Invalid blockId: %d\n", blockId);
-    #endif
-    return -1;
-  }
-  if((*p & 1) ==0)
-  {
-    #if DEBUG == 1
+  if(!(isValid(p, blockId) && isAllocated(p))) {
+    #if TESTING == 0
     printf("Invalid blockId: %d\n", blockId);
     #endif
     return -1;
@@ -174,15 +172,8 @@ int printHeap(int* p, int blockId, int bytes) {
   if (isZero(blockId) || isZero(bytes)) return -1;
   char* readPointer;
   char* end = (char*)p + HEAPSIZE;
-  if((p = findBlockId(p, blockId)) == NULL || !(*p & 1)) {
-    #if DEBUG == 1
-    printf("Invalid blockId: %d\n", blockId);
-    #endif
-    return -1;
-  }
-  if((*p & 1) ==0)
-  {
-    #if DEBUG == 1
+  if(!(isValid(p, blockId) && isAllocated(p))) {
+    #if TESTING == 0
     printf("Invalid blockId: %d\n", blockId);
     #endif
     return -1;
@@ -231,8 +222,8 @@ int* findBlockId(int* p, int blockId) {
   */
   if (isZero(blockId)) return NULL;
   int* end = p + (HEAPSIZE/4);
-  while((p < end) && *(p + 1) != blockId)
-    p = p + (*p & -2)/4;
+  while((p < end) && !hasBlockId(p, blockId))
+    nextBlock(&p);
   if(p == end)
     p = 0;
   return p;
@@ -240,4 +231,24 @@ int* findBlockId(int* p, int blockId) {
 
 bool isZero(int param) {
   return param == 0;
+}
+
+bool nextInHeap(int* p, int* end) {
+  return p + (*p & -2)/4 != end;
+}
+
+void nextBlock(int** p) {
+  *p = *p + (**p & -2)/4;
+}
+
+bool hasBlockId(int* p, int blockId) {
+  return *(p + 1) == blockId;
+}
+
+bool isAllocated(int* p) {
+  return (*p & 1) == 1;
+}
+
+bool isValid(int* p, int blockId) {
+  return (p = findBlockId(p, blockId)) != NULL;
 }
